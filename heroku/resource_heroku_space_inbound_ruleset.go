@@ -73,6 +73,9 @@ func resourceHerokuSpaceInboundRulesetSet(d *schema.ResourceData, meta interface
 	spaceIdentity := d.Get("space").(string)
 	ruleset := getRulesetFromSchema(d)
 
+	herokuMutexKV.Lock(spaceIdentity)
+	defer herokuMutexKV.Unlock(spaceIdentity)
+
 	_, err := client.InboundRulesetCreate(context.TODO(), spaceIdentity, ruleset)
 	if err != nil {
 		return fmt.Errorf("Error creating inbound ruleset for space (%s): %s", spaceIdentity, err)
@@ -109,6 +112,9 @@ func resourceHerokuSpaceInboundRulesetDelete(d *schema.ResourceData, meta interf
 	client := meta.(*heroku.Service)
 
 	spaceIdentity := d.Get("space").(string)
+
+	herokuMutexKV.Lock(spaceIdentity)
+	defer herokuMutexKV.Unlock(spaceIdentity)
 
 	// Heroku Private Spaces ship with a default 0.0.0.0/0 inbound ruleset. An HPS *MUST* have
 	// an inbound ruleset. There's no delete API method for this. So when we "delete" the ruleset

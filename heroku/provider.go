@@ -7,9 +7,12 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/hashicorp/terraform/helper/mutexkv"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 )
+
+var herokuMutexKV = mutexkv.NewMutexKV()
 
 // Provider returns a terraform.ResourceProvider.
 func Provider() terraform.ResourceProvider {
@@ -46,6 +49,7 @@ func Provider() terraform.ResourceProvider {
 			"heroku_pipeline":                          resourceHerokuPipeline(),
 			"heroku_pipeline_coupling":                 resourceHerokuPipelineCoupling(),
 			"heroku_space":                             resourceHerokuSpace(),
+			"heroku_space_inbound_rule":                resourceHerokuSpaceInboundRule(),
 			"heroku_space_inbound_ruleset":             resourceHerokuSpaceInboundRuleset(),
 			"heroku_space_app_access":                  resourceHerokuSpaceAppAccess(),
 			"heroku_space_peering_connection_accepter": resourceHerokuSpacePeeringConnectionAccepter(),
